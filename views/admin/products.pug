@@ -17,7 +17,9 @@ block content
                             h2.product__price $ #{ product.price }
                             p.product__description #{ product.description }
                         .card__actions
-                            a.btn(href="/admin/edit-product") Edit
-                            a.btn(href="/admin/delete-product") Edit
+                            a.btn(href=`/admin/edit-product/${ product.id }?edit=true`) Edit
+                            form.product-form(action="/admin/delete-product", method="POST")
+                                input(type="hidden" name="id" value=product.id)
+                                button.btn(type="submit") delete
         else
             h1 No Products

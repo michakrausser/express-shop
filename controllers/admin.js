@@ -1,4 +1,4 @@
-const Product = require( '../models/product' );
+const Product = require( '../models/product' )
 
 const getAddProduct = ( req, res, next ) => {
   /*Way to use normal html templates
@@ -8,29 +8,71 @@ const getAddProduct = ( req, res, next ) => {
   // Use res.render for Template Engines
 
   res.render(
-    "admin/add-product",
+    'admin/edit-product',
     {
-      pageTitle: "Add Products",
-      path: "/admin/add-product",
-      activeAddProduct: true,
-      formsCss: true,
-      productCss: true
+      pageTitle: 'Add Products',
+      path: '/admin/add-product',
+      editing: false,
+      formAction: 'add-product'
     }
-  );
+  )
 }
 
 const postAddProduct = ( req, res, next ) => {
-  const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
-  const description = req.body.description;
-  const price = req.body.price;
-  console.log( { title })
-  console.log( { imageUrl })
-  console.log( { description })
-  console.log( { price })
-  const product = new Product( title, imageUrl, description, price )
-  product.save();
-  res.redirect('/admin/products');
+  const title = req.body.title
+  const imageUrl = req.body.imageUrl
+  const description = req.body.description
+  const price = req.body.price
+  const product = new Product(
+    title,
+    imageUrl,
+    description,
+    price
+  )
+  product
+    .save()
+    .then(() => {
+      res.redirect( '/' )
+    })
+    .catch( err => console.log( err ))
+  res.redirect( '/admin/products' )
+}
+
+const getEditProduct = ( req, res, next ) => {
+  const editMode = req.query.edit
+  if ( !editMode ) {
+    return res.redirect( '/' )
+  }
+  const productId = req.params.productId
+  Product.findById( productId, product => {
+    res.render(
+      'admin/edit-product',
+      {
+        pageTitle: 'Add Products',
+        product,
+        path: '/admin/edit-product',
+        editing: editMode,
+        formAction: 'edit-product'
+      }
+    )
+  })
+}
+
+const postEditProduct = ( req, res, next ) => {
+  const title = req.body.title
+  const imageUrl = req.body.imageUrl
+  const description = req.body.description
+  const price = req.body.price
+  const productId = req.body.id
+  const updatedProduct = new Product(
+    title,
+    imageUrl,
+    description,
+    price,
+    productId
+  )
+  updatedProduct.save()
+  res.redirect( '/admin/products' )
 }
 
 const getProducts = ( req, res, next ) => {
@@ -42,18 +84,37 @@ const getProducts = ( req, res, next ) => {
     res.render(
       'admin/products',
       {
-        pageTitle: "All Products",
+        pageTitle: 'All Products',
         products,
-        path: "/admin/products",
+        path: '/admin/products',
         activeShop: true,
         productCSS: true
       }
     )
-  });
+  })
 }
+
+const getProduct = ( req, res, next ) => {
+  const productId = req.params.productId
+  Product.findById( productId, product => {
+    console.log( { product } )
+  })
+  res.redirect( '/')
+}
+
+const postDeleteProduct = ( req, res, next ) => {
+  const productId = req.body.id
+  Product.deleteById( productId )
+  res.redirect( '/admin/products' )
+}
+
 
 module.exports = {
   getAddProduct,
   postAddProduct,
-  getProducts
+  getEditProduct,
+  postEditProduct,
+  getProducts,
+  getProduct,
+  postDeleteProduct
 }

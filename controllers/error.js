@@ -5,7 +5,7 @@ const get404Routes = ( req, res, next ) => {
       pageTitle: "404 Not found",
       path: '/404'
     }
-  );
+  )
 }
 
-module.exports = get404Routes;
+module.exports = get404Routes
