@@ -1,6 +1,6 @@
-const Product = require( '../models/product' )
+import Product from '../models/product.js'
 
-const getAddProduct = ( req, res, next ) => {
+export const getAddProduct = ( req, res, next ) => {
   /*Way to use normal html templates
    * res.sendFile( path.join( rootDir, 'views', 'add-product.ejs.html') )
    */
@@ -18,7 +18,7 @@ const getAddProduct = ( req, res, next ) => {
   )
 }
 
-const postAddProduct = ( req, res, next ) => {
+export const postAddProduct = ( req, res, next ) => {
   const title = req.body.title
   const imageUrl = req.body.imageUrl
   const description = req.body.description
@@ -38,7 +38,7 @@ const postAddProduct = ( req, res, next ) => {
   res.redirect( '/admin/products' )
 }
 
-const getEditProduct = ( req, res, next ) => {
+export const getEditProduct = ( req, res, next ) => {
   const editMode = req.query.edit
   if ( !editMode ) {
     return res.redirect( '/' )
@@ -58,7 +58,7 @@ const getEditProduct = ( req, res, next ) => {
   })
 }
 
-const postEditProduct = ( req, res, next ) => {
+export const postEditProduct = ( req, res, next ) => {
   const title = req.body.title
   const imageUrl = req.body.imageUrl
   const description = req.body.description
@@ -75,7 +75,7 @@ const postEditProduct = ( req, res, next ) => {
   res.redirect( '/admin/products' )
 }
 
-const getProducts = ( req, res, next ) => {
+export const getProducts = ( req, res, next ) => {
   /*Way to use normal html templates
    * res.sendFile( path.join( rootDir, 'views', 'shop.html' ) )
    */
@@ -94,7 +94,7 @@ const getProducts = ( req, res, next ) => {
   })
 }
 
-const getProduct = ( req, res, next ) => {
+export const getProduct = ( req, res, next ) => {
   const productId = req.params.productId
   Product.findById( productId, product => {
     console.log( { product } )
@@ -102,19 +102,8 @@ const getProduct = ( req, res, next ) => {
   res.redirect( '/')
 }
 
-const postDeleteProduct = ( req, res, next ) => {
+export const postDeleteProduct = ( req, res, next ) => {
   const productId = req.body.id
   Product.deleteById( productId )
   res.redirect( '/admin/products' )
-}
-
-
-module.exports = {
-  getAddProduct,
-  postAddProduct,
-  getEditProduct,
-  postEditProduct,
-  getProducts,
-  getProduct,
-  postDeleteProduct
 }

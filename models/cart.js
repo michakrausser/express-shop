@@ -1,13 +1,8 @@
-const fs = require( 'fs' )
-const path = require( 'path' )
+import fs from 'fs'
 
-const cartPath = path.join(
-  path.dirname( process.mainModule.filename ),
-  'data',
-  'cart.json'
-)
+const cartPath = 'p'
 
-const cart = class Cart {
+export default class Cart {
   static addProduct( id, productPrice ) {
     // Fetch the previous cart
     fs.readFile( cartPath, ( err, fileContent ) => {
@@ -63,5 +58,3 @@ const cart = class Cart {
     })
   }
 }
-
-module.exports = cart

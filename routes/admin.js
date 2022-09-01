@@ -1,32 +1,21 @@
-const path = require( 'path' )
-const express = require( 'express' )
-// const rootDir = require( '../util/path' )
-const {
-  getAddProduct,
-  postAddProduct,
-  getEditProduct,
-  postEditProduct,
-  getProducts,
-  getProduct,
-  postDeleteProduct
-} = require( '../controllers/admin' )
-const router = express.Router()
+import express from 'express'
+
+import * as adminRoutes from '../controllers/admin.js'
+export const adminRouter = express.Router()
 
 // path: /admin/add-product.ejs => GET
-router.get( '/add-product', getAddProduct )
+adminRouter.get( '/add-product', adminRoutes.getAddProduct )
 
 // path /admin/add-product.ejs => POST
-router.post( '/add-product', postAddProduct )
+adminRouter.post( '/add-product', adminRoutes.postAddProduct )
 
-router.get( '/edit-product/:productId', getEditProduct )
+adminRouter.get( '/edit-product/:productId', adminRoutes.getEditProduct )
 
-router.post( '/edit-product', postEditProduct )
+adminRouter.post( '/edit-product', adminRoutes.postEditProduct )
 
-router.get( '/products', getProducts)
+adminRouter.get( '/products', adminRoutes.getProducts)
 
-router.get( '/products/:productId', getProduct )
+adminRouter.get( '/products/:productId', adminRoutes.getProduct )
 
-router.post( '/delete-product', postDeleteProduct )
-
-module.exports = router
+adminRouter.post( '/delete-product', adminRoutes.postDeleteProduct )
 

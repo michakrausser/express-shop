@@ -1,4 +1,4 @@
-const get404Routes = ( req, res, next ) => {
+export default ( req, res, next ) => {
   res.status( 404 ).render(
     '404',
     {
@@ -7,5 +7,3 @@ const get404Routes = ( req, res, next ) => {
     }
   )
 }
-
-module.exports = get404Routes

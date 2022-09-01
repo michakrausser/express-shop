@@ -1,8 +1,7 @@
-const Product = require( '../models/product' )
-const Cart = require( '../models/cart' )
-const fs = require( "fs" );
+import Product from '../models/product.js'
+import Cart from '../models/cart.js'
 
-const getIndex = ( req, res, next ) => {
+export const getIndex = ( req, res, next ) => {
   res.render(
     "shop/index",
     {
@@ -12,7 +11,7 @@ const getIndex = ( req, res, next ) => {
   )
 }
 
-const getProducts = ( req, res, next ) => {
+export const getProducts = ( req, res, next ) => {
   /*Way to use normal html templates
    * res.sendFile( path.join( rootDir, 'views', 'shop.html' ) )
    */
@@ -32,7 +31,7 @@ const getProducts = ( req, res, next ) => {
     .catch( err => console.log( err ))
 }
 
-const getProduct = ( req, res, next ) => {
+export const getProduct = ( req, res, next ) => {
   const productId = req.params.productId
   Product.findById( productId )
     .then(([ product ]) => {
@@ -48,7 +47,7 @@ const getProduct = ( req, res, next ) => {
     .catch( err => console.log( err ))
 }
 
-const getCart = ( req, res, next ) => {
+export const getCart = ( req, res, next ) => {
   Cart.getCart( cart => {
     Product.fetchAll( products => {
       const cartProducts = []
@@ -70,7 +69,7 @@ const getCart = ( req, res, next ) => {
   })
 }
 
-const postCart = ( req, res, next ) => {
+export const postCart = ( req, res, next ) => {
   const productId = req.body.productId
   Product.findById( productId, ( product ) => {
     Cart.addProduct( productId, product.price )
@@ -78,7 +77,7 @@ const postCart = ( req, res, next ) => {
   res.redirect( "/cart" )
 }
 
-const postCartDeleteProduct = ( req, res, next ) => {
+export const postCartDeleteProduct = ( req, res, next ) => {
   const productId = req.body.id
   console.log( { productId } );
   Product.findById( productId, ( product ) => {
@@ -88,7 +87,7 @@ const postCartDeleteProduct = ( req, res, next ) => {
   res.redirect( "/cart" )
 }
 
-const getOrder = ( req, res, next ) => {
+export const getOrder = ( req, res, next ) => {
   res.render(
     "shop/order",
     {
@@ -98,7 +97,7 @@ const getOrder = ( req, res, next ) => {
   )
 }
 
-const getCheckout = ( req, res, next ) => {
+export const getCheckout = ( req, res, next ) => {
   res.render(
     'shop/checkout',
     {
@@ -106,15 +105,4 @@ const getCheckout = ( req, res, next ) => {
       path: "/checkout",
     }
   )
-}
-
-module.exports = {
-  getIndex,
-  getProducts,
-  getProduct,
-  getCart,
-  postCart,
-  postCartDeleteProduct,
-  getCheckout,
-  getOrder
 }
