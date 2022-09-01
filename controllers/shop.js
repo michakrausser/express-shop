@@ -15,31 +15,46 @@ export const getProducts = ( req, res, next ) => {
   /*Way to use normal html templates
    * res.sendFile( path.join( rootDir, 'views', 'shop.html' ) )
    */
-  Product.fetchAll()
-    .then(([ rows, fieldData ]) => {
-      res.render(
-        "shop/product-list",
-        {
-          pageTitle: "Shop",
-          products: rows,
-          path: "/shop",
-          activeShop: true,
-          productCSS: true
-        }
-      )
-    })
-    .catch( err => console.log( err ))
+  Product.findAll()
+      .then( products => {
+        res.render(
+          "shop/product-list",
+          {
+            pageTitle: "Shop",
+            products,
+            path: "/shop",
+            activeShop: true,
+            productCSS: true
+          }
+        )
+      })
+      .catch( err => err.log )
 }
 
 export const getProduct = ( req, res, next ) => {
   const productId = req.params.productId
-  Product.findById( productId )
-    .then(([ product ]) => {
+  /*
+   * Instead of findByPK you can use findAll() both ways are perfect fine.
+   * Product.findAll({ where: { id: productId }})
+   *  .then( products => {
+   *    res.render(
+   *     "shop/product-detail",
+   *     {
+   *       pageTitle: products[ 0 ].title,
+   *       products[ 0 ],
+   *       path: '/products'
+   *     }
+   *   )
+   * })
+   * .catch( err => console.log( err ))
+   **/
+  Product.findByPk( productId )
+    .then( product => {
       res.render(
         "shop/product-detail",
         {
           pageTitle: product.title,
-          product: product[ 0 ],
+          product,
           path: '/products'
         }
       )
