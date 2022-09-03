@@ -127,6 +127,11 @@ form {
   border-color: #ffeb3b;
 }
 
+.centered {
+  display: flex;
+  justify-content: center;
+}
+
 .backdrop {
   position: fixed;
   top: 0;

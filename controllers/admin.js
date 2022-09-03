@@ -23,12 +23,14 @@ export const postAddProduct = ( req, res, next ) => {
   const imageUrl = req.body.imageUrl
   const description = req.body.description
   const price = req.body.price
-  Product.create({
-    title,
-    price,
-    imageUrl,
-    description
-  })
+  req.user
+    .createProduct({
+      title,
+      price,
+      imageUrl,
+      description,
+      userId: req.user.id
+    })
     .then( result => {
       console.log( "Created Product" )
       res.redirect( '/admin/products' )
@@ -42,8 +44,10 @@ export const getEditProduct = ( req, res, next ) => {
     return res.redirect( '/' )
   }
   const productId = req.params.productId
-  Product.findByPk( productId )
-    .then( product => {
+  req.user
+    .getProducts({ where: { id: productId }})
+    .then( products => {
+      const product = products[ 0 ]
       if ( !product ) return res.redirect( '/' )
       res.render(
         'admin/edit-product',
@@ -86,19 +90,21 @@ export const getProducts = ( req, res, next ) => {
    * res.sendFile( path.join( rootDir, 'views', 'shop.html' ) )
    */
   Product.findAll()
-    .then( products => {
-      // Use res.render for Template Engines
-      res.render(
-        'admin/products',
-        {
-          pageTitle: 'All Products',
-          products,
-          path: '/admin/products',
-          activeShop: true,
-          productCSS: true
-        }
-      )
-    })
+    req.user
+      .getProducts()
+      .then( products => {
+        // Use res.render for Template Engines
+        res.render(
+          'admin/products',
+          {
+            pageTitle: 'All Products',
+            products,
+            path: '/admin/products',
+            activeShop: true,
+            productCSS: true
+          }
+        )
+      })
     .catch( err => console.log( err ))
 }
 
