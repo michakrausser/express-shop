@@ -100,7 +100,8 @@ export const postCartDeleteProduct = ( req, res, next ) => {
 }
 
 export const getOrders = ( req, res, next ) => {
-  req.user.getOrders({ include: [ 'products' ]})
+  req.user
+    .getOrders()
     .then( orders => {
       res.render(
         "shop/orders",
@@ -117,26 +118,7 @@ export const getOrders = ( req, res, next ) => {
 export const postOrders = ( req, res, next ) => {
   let fetchedCart
   req.user
-    .getCart()
-    .then( cart => {
-      fetchedCart = cart
-      return cart.getProducts()
-    })
-    .then(products => {
-      return req.user
-        .createOrder()
-        .then( order => {
-          return order.addProducts(
-            products.map( product => {
-              product.orderItem = { quantity: product.cartItem.quantity }
-            return product
-          }) )
-        })
-        .catch( err => console.log( err ))
-    })
-    .then(() => {
-      return fetchedCart.setProducts( null )
-    })
+    .addOrder()
     .then(() => {
       res.redirect( '/orders' )
     })

@@ -6,7 +6,7 @@ const ObjectId = mongodb.ObjectId
 
 export default class {
   constructor( username, email, cart = { items: []}, id ) {
-    this.name = username
+    this.username = username
     this.email = email
     this.cart = cart
     this._id = id
@@ -63,6 +63,39 @@ export default class {
         return products.map( p => {
           return { ...p, quantity: this.cart.items.find( i => i.productId.toString() === p._id.toString() ).quantity }
         })
+      })
+  }
+
+  getOrders() {
+    return getDb()
+      .collection( 'orders' )
+      .find({ 'user._id': new ObjectId( this._id )})
+      .toArray()
+  }
+
+  addOrder() {
+    const db = getDb()
+    return this.getCart()
+      .then( products => {
+        const order = {
+          items: products,
+          user: {
+            _id: new ObjectId( this._id ),
+            username: this.username,
+          }
+        }
+        return db
+          .collection( 'orders' )
+          .insertOne( order )
+      })
+      .then( result => {
+        this.cart = { items: []}
+        return db
+          .collection( 'users' )
+          .updateOne(
+            { _id: new ObjectId( this._id )},
+            { $set: { cart: { items: [] }}}
+          )
       })
   }
 

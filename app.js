@@ -22,7 +22,7 @@ app.use( express.static( 'public' ))
 app.use(( req, res, next ) => {
   User.findById( "63321c88b9e6ca39104bec48" )
     .then( user => {
-      req.user = new User( user.name, user.email, user.cart, user._id )
+      req.user = new User( user.username, user.email, user.cart, user._id )
       next()
     })
     .catch( err => console.log( err ))
