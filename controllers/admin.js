@@ -23,16 +23,10 @@ export const postAddProduct = ( req, res, next ) => {
   const imageUrl = req.body.imageUrl
   const description = req.body.description
   const price = req.body.price
-  req.user
-    .createProduct({
-      title,
-      price,
-      imageUrl,
-      description,
-      userId: req.user.id
-    })
+  const product = new Product( title, imageUrl, description, price, null, req.user._id )
+  product
+    .save()
     .then( result => {
-      console.log( "Created Product" )
       res.redirect( '/admin/products' )
     })
     .catch( err => console.log( err ))
@@ -44,10 +38,8 @@ export const getEditProduct = ( req, res, next ) => {
     return res.redirect( '/' )
   }
   const productId = req.params.productId
-  req.user
-    .getProducts({ where: { id: productId }})
-    .then( products => {
-      const product = products[ 0 ]
+  Product.findById( productId )
+    .then( product => {
       if ( !product ) return res.redirect( '/' )
       res.render(
         'admin/edit-product',
@@ -69,16 +61,10 @@ export const postEditProduct = ( req, res, next ) => {
   const description = req.body.description
   const price = req.body.price
   const productId = req.body.id
-  Product.findByPk( productId )
-    .then( product => {
-      product.title = title
-      product.imageUrl = imageUrl
-      product.description = description
-      product.price = price
-      return product.save()
-    })
+  const product = new Product( title, imageUrl, description, price, productId )
+  product
+    .save()
     .then( result => {
-      console.log( "Updated product" )
       res.redirect( '/admin/products' )
     })
     .catch( err => console.log( err ))
@@ -89,22 +75,20 @@ export const getProducts = ( req, res, next ) => {
   /*Way to use normal html templates
    * res.sendFile( path.join( rootDir, 'views', 'shop.html' ) )
    */
-  Product.findAll()
-    req.user
-      .getProducts()
-      .then( products => {
-        // Use res.render for Template Engines
-        res.render(
-          'admin/products',
-          {
-            pageTitle: 'All Products',
-            products,
-            path: '/admin/products',
-            activeShop: true,
-            productCSS: true
-          }
-        )
-      })
+  Product.fetchAll()
+    .then( products => {
+      // Use res.render for Template Engines
+      res.render(
+        'admin/products',
+        {
+          pageTitle: 'All Products',
+          products,
+          path: '/admin/products',
+          activeShop: true,
+          productCSS: true
+        }
+      )
+    })
     .catch( err => console.log( err ))
 }
 
@@ -134,7 +118,7 @@ export const postDeleteProduct = ( req, res, next ) => {
       res.redirect( '/admin/products' )
     })
     .catch( err => console.log( err ))*/
-  Product.destroy({ where: { id: productId }})
+  Product.deleteById( productId )
     .then( () => {
       res.redirect( '/admin/products' )
     })

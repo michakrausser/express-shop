@@ -25,6 +25,6 @@ block content
 
             if editing
                 .form-control
-                    input(type="hidden", value=product.id, name="id")
+                    input(type="hidden", value=product._id, name="id")
 
             button.btn(type="submit") #{ ( editing ? 'Update Product' : 'Add Product' ) }

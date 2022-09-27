@@ -15,7 +15,8 @@ adminRouter.post( '/edit-product', adminRoutes.postEditProduct )
 
 adminRouter.get( '/products', adminRoutes.getProducts)
 
-adminRouter.get( '/products/:productId', adminRoutes.getProduct )
+/*adminRouter.get( '/products/:productId', adminRoutes.getProduct )*/
 
 adminRouter.post( '/delete-product', adminRoutes.postDeleteProduct )
 
+/*https://dictionary.cambridge.org/es-LA/images/full/book_noun_001_01679.jpg?version=5.0.250*/
