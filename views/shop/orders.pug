@@ -2,14 +2,12 @@ extends ../layouts/main-layout.pug
 
 block content
     main
-        if orders.length > 0
+        if order
             ul
-                each order in orders
-                    li
-                        h1 #{ order._id }
-                        ul
-                            each product in order.items
-                                li #{ product.title } ( #{ product.quantity } )
+                h1 #{ order._id }
+                ul
+                    each product in order.items
+                        li #{ product.product.title } ( #{ product.quantity } )
 
         else
             h1 You don't have any orders

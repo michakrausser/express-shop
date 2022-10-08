@@ -3,8 +3,9 @@ import express from 'express'
 import { adminRouter } from './routes/admin.js'
 import { shopRouter } from './routes/shop.js'
 import get404Routes from './controllers/error.js'
+
 import bodyParser from 'body-parser'
-import mongoConnect from './util/database.js'
+import mongoose from 'mongoose'
 import User from './models/user.js'
 
 const app = express()
@@ -20,9 +21,9 @@ app.use( bodyParser.urlencoded( { extended: false } ) )
 app.use( express.static( 'public' ))
 
 app.use(( req, res, next ) => {
-  User.findById( "63321c88b9e6ca39104bec48" )
+  User.findById( "6340c7ffb9c2dc68e1ee2f39" )
     .then( user => {
-      req.user = new User( user.username, user.email, user.cart, user._id )
+      req.user = user
       next()
     })
     .catch( err => console.log( err ))
@@ -33,8 +34,26 @@ app.use( shopRouter )
 
 app.use( get404Routes )
 
-mongoConnect( () => {
-  app.listen( 3000 )
-})
+mongoose.connect( 'mongodb+srv://michakrausser:jklF42egTmb49PK4@store.kurcrn1.mongodb.net/shop?retryWrites=true&w=majority' )
+  .then( result => {
+    User.findOne()
+      .then(user => {
+        if ( !user ) {
+          const user = new User({
+            name: 'Micha',
+            email: 'micha@vue.js',
+            cart: {
+              items: []
+            },
+            order: {
+              items: [],
+              totalPrice: 0
+            }
+          })
+          user.save();
+        }
+      })
+    app.listen( 3000 )
+  })
 
 

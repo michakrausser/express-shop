@@ -14,20 +14,20 @@ export const getProducts = ( req, res, next ) => {
   /*Way to use normal html templates
    * res.sendFile( path.join( rootDir, 'views', 'shop.html' ) )
    */
-  Product.fetchAll()
-      .then( products => {
-        res.render(
-          "shop/product-list",
-          {
-            pageTitle: "Shop",
-            products,
-            path: "/shop",
-            activeShop: true,
-            productCSS: true
-          }
-        )
-      })
-      .catch( err => err.log )
+  Product.find()
+    .then( products => {
+      res.render(
+        "shop/product-list",
+        {
+          pageTitle: "Shop",
+          products,
+          path: "/shop",
+          activeShop: true,
+          productCSS: true
+        }
+      )
+    })
+    .catch( err => err.log )
 }
 
 export const getProduct = ( req, res, next ) => {
@@ -49,7 +49,6 @@ export const getProduct = ( req, res, next ) => {
    **/
   Product.findById( productId )
     .then( product => {
-      console.log( product );
       res.render(
         "shop/product-detail",
         {
@@ -64,18 +63,18 @@ export const getProduct = ( req, res, next ) => {
 
 export const getCart = ( req, res, next ) => {
   req.user
-    .getCart()
-    .then( products => {
+    .populate( 'cart.items.product' )
+    .then( user => {
+      const cartItems = user.cart.items
       res.render(
         "shop/cart",
         {
           pageTitle: "Your Cart",
           path: "/cart",
-          products
+          cartItems
         }
       )
     })
-    .catch( err => console.log( err ))
 }
 
 export const postCart = ( req, res, next ) => {
@@ -84,7 +83,7 @@ export const postCart = ( req, res, next ) => {
     .then( product => {
       return req.user.addToCart( product )
     })
-    .then( result => {
+    .then( () => {
       res.redirect( '/cart' )
     })
 }
@@ -92,7 +91,7 @@ export const postCart = ( req, res, next ) => {
 export const postCartDeleteProduct = ( req, res, next ) => {
   const productId = req.body.id
   req.user
-    .deleteItemFromCart( productId )
+    .removeFromCart( productId )
     .then( cartItems => {
       res.redirect( '/cart' )
     })
@@ -101,13 +100,14 @@ export const postCartDeleteProduct = ( req, res, next ) => {
 
 export const getOrders = ( req, res, next ) => {
   req.user
-    .getOrders()
-    .then( orders => {
+    .populate( 'order.items.product' )
+    .then( user => {
+      console.log( 'order: ', user.order );
       res.render(
         "shop/orders",
         {
           pageTitle: "Your Order",
-          orders,
+          order: user.order,
           path: "/orders",
         }
       )
@@ -116,7 +116,6 @@ export const getOrders = ( req, res, next ) => {
 }
 
 export const postOrders = ( req, res, next ) => {
-  let fetchedCart
   req.user
     .addOrder()
     .then(() => {

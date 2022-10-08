@@ -23,7 +23,13 @@ export const postAddProduct = ( req, res, next ) => {
   const imageUrl = req.body.imageUrl
   const description = req.body.description
   const price = req.body.price
-  const product = new Product( title, imageUrl, description, price, null, req.user._id )
+  const product = new Product({
+    title,
+    imageUrl,
+    description,
+    price,
+    userId: req.user
+  })
   product
     .save()
     .then( result => {
@@ -61,21 +67,26 @@ export const postEditProduct = ( req, res, next ) => {
   const description = req.body.description
   const price = req.body.price
   const productId = req.body.id
-  const product = new Product( title, imageUrl, description, price, productId )
-  product
-    .save()
-    .then( result => {
+
+  Product.findById( productId )
+    .then( product => {
+      product.title = title
+      product.imageUrl = imageUrl
+      product.description = description
+      product.price = price
+      return product.save()
+    })
+    .then( () => {
       res.redirect( '/admin/products' )
     })
     .catch( err => console.log( err ))
-  res.redirect( '/admin/products' )
 }
 
 export const getProducts = ( req, res, next ) => {
   /*Way to use normal html templates
    * res.sendFile( path.join( rootDir, 'views', 'shop.html' ) )
    */
-  Product.fetchAll()
+  Product.find()
     .then( products => {
       // Use res.render for Template Engines
       res.render(
@@ -94,7 +105,7 @@ export const getProducts = ( req, res, next ) => {
 
 export const getProduct = ( req, res, next ) => {
   const productId = req.params.productId
-  Product.findByPk( productId )
+  Product.find( productId )
     .then( product => {
       res.render(
         "shop/product-detail",
@@ -118,7 +129,7 @@ export const postDeleteProduct = ( req, res, next ) => {
       res.redirect( '/admin/products' )
     })
     .catch( err => console.log( err ))*/
-  Product.deleteById( productId )
+  Product.findByIdAndDelete( productId )
     .then( () => {
       res.redirect( '/admin/products' )
     })

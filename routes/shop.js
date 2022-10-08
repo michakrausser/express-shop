@@ -2,6 +2,7 @@ import express from 'express'
 import * as controllerRoutes from '../controllers/shop.js'
 export const shopRouter = express.Router()
 
+
 shopRouter.get( '/', controllerRoutes.getIndex )
 
 shopRouter.get( '/shop', controllerRoutes.getProducts )
